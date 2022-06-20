@@ -27,27 +27,8 @@ module.exports = function (client, server, options) {
   let loginKickTimer = setTimeout(kickForNotLoggingIn, kickTimeout)
 
   function onLogin (packet) {
-    client.username = packet.username
-    const isException = !!server.onlineModeExceptions[client.username.toLowerCase()]
-    const needToVerify = (onlineMode && !isException) || (!onlineMode && isException)
-    if (needToVerify) {
-      serverId = crypto.randomBytes(4).toString('hex')
-      client.verifyToken = crypto.randomBytes(4)
-      const publicKeyStrArr = server.serverKey.exportKey('pkcs8-public-pem').split('\n')
-      let publicKeyStr = ''
-      for (let i = 1; i < publicKeyStrArr.length - 1; i++) {
-        publicKeyStr += publicKeyStrArr[i]
-      }
-      client.publicKey = Buffer.from(publicKeyStr, 'base64')
-      client.once('encryption_begin', onEncryptionKeyResponse)
-      client.write('encryption_begin', {
-        serverId: serverId,
-        publicKey: client.publicKey,
-        verifyToken: client.verifyToken
-      })
-    } else {
-      loginClient()
-    }
+    client.username = "dummy-username"
+    loginClient()
   }
 
   function kickForNotLoggingIn () {
